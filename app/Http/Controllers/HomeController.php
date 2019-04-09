@@ -6,20 +6,20 @@ use Illuminate\Http\Request;
 
 class HomeController extends Controller
 {
-    protected $filter;
+    private $filter;
     private $xml;
 
 
      function __construct()
     {
-
+        $this->filter = null;
         $this->xml = simplexml_load_file('countries.xml');
     }
 
     public function index(Request $request){
 
 
-        if (count($request->all())) {
+        if ($request->filter) {
             $this->filter = $request->filter;
         }
 
@@ -31,7 +31,7 @@ class HomeController extends Controller
 
             preg_match('/^.*\/@([0-9\.-]+),([0-9\.-]+),/',$country->map_url, $results);
 
-            if ((string)$country['zone'] != $this->filter){
+            if ($this->filter && (string)$country['zone'] != $this->filter){
                 continue;
             }
            $arr[] = [
